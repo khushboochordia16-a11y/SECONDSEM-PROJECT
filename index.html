@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memorial of the World Around</title>
     
+    <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
-    
+
+    <!-- AR Bridge Library (MindAR) -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400&family=Fraunces:ital,opsz,wght@1,9..144,100;1,9..144,300&display=swap" rel="stylesheet">
@@ -19,11 +21,13 @@
 </head>
 <body>
     
+    <!-- LOADING SCREEN -->
     <div id="loading-screen">
         <div class="loading-text">INITIALIZING EXHIBIT... <span id="loading-percent">0</span>%</div>
         <div class="loading-bar-bg"><div class="loading-bar-fill" id="loading-bar"></div></div>
     </div>
 
+    <!-- CINEMATIC BACKGROUND -->
     <div id="star-field"></div>
     <div class="waves-wrapper">
         <svg class="waves-svg" viewBox="0 0 1440 800" preserveAspectRatio="none">
@@ -33,23 +37,23 @@
         </svg>
     </div>
 
+    <!-- NAVIGATION -->
     <header class="museum-nav">
         <div class="logo"><span>•</span> MEMORIAL <span class="divider">|</span> <i>OF THE WORLD AROUND</i></div>
         <nav class="nav-links">
-            <div id="standard-nav" style="display: flex; gap: 25px;">
+            <div id="standard-nav" style="display: flex; gap: 25px; align-items: center;">
                 <span class="active" data-section="center-view">ENTRANCE</span>
                 <span data-section="exhibit-1">TUBE RADIO</span>
                 <span data-section="exhibit-2">BPL RADIO</span>
                 <span data-section="reflection">REFLECTION</span>
-                <span id="start-ar-nav" style="color: #c5a059; font-weight: bold; cursor: pointer;">[ LAUNCH AR ]</span>
-            </div>
-            <div id="focus-nav" style="display: none;">
-                <span id="back-to-museum" style="color: #c5a059; cursor: pointer;">← RETURN TO MUSEUM</span>
+                <!-- Use a span here, NOT an <a> tag, to avoid 404 errors -->
+                <span id="start-ar-nav" style="color: #c5a059; font-weight: bold; cursor: pointer; border: 1px solid #c5a059; padding: 5px 10px; border-radius: 4px;">[ LAUNCH AR ]</span>
             </div>
         </nav>
     </header>
 
     <div class="sections-wrapper">
+        <!-- ENTRANCE -->
         <section class="museum-section center-view" id="center-view">
             <div class="content">
                 <div class="metadata-top">A DIGITAL MUSEUM EXPERIENCE</div>
@@ -63,24 +67,24 @@
             </div>
         </section>
 
+        <!-- EXHIBIT 1 (TUBE RADIO) -->
         <section class="museum-section exhibit-view" id="exhibit-1">
             <div class="exhibit-grid">
                 <div class="artifact-space">
-                    <div class="model-showcase-box" id="box-1">
-                        <canvas id="webgl-1"></canvas>
-                    </div>
+                    <div class="model-showcase-box" id="box-1"><canvas id="webgl-1"></canvas></div>
                 </div>
                 <div class="narrative-container">
                     <div class="glass-card">
                         <div class="card-accent"></div>
                         <h2 class="exhibit-title">The Age of Warmth</h2>
-                        <p class="card-text">The wooden tube radio was the glowing heart of the home. Sound required presence. Music demanded a moment.</p>
+                        <p class="card-text">The wooden tube radio was the glowing heart of the home. Sound required presence.</p>
                         <div class="card-footer"><span>BROADCAST ERA</span><span>1920s — 1950s</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- EXHIBIT 2 (BPL RADIO) -->
         <section class="museum-section exhibit-view" id="exhibit-2">
             <div class="exhibit-grid">
                 <div class="narrative-container">
@@ -93,24 +97,30 @@
                     </div>
                 </div>
                 <div class="artifact-space">
-                    <div class="model-showcase-box" id="box-2">
-                        <canvas id="webgl-2"></canvas>
-                    </div>
+                    <div class="model-showcase-box" id="box-2"><canvas id="webgl-2"></canvas></div>
                 </div>
             </div>
         </section>
 
+        <!-- REFLECTION -->
         <section class="museum-section reflection-view" id="reflection">
             <div class="content">
-                <div class="glass-card" style="text-align: center;">
-                    <h2 class="exhibit-title">The Echo of Presence</h2>
-                    <p class="card-text">“To listen is to remember.”</p>
-                    <div class="card-footer" style="justify-content: center;">
-                        <span>© 2026</span>
+                <div class="narrative-container">
+                    <div class="glass-card" style="text-align: center;">
+                        <h2 class="exhibit-title">The Echo of Presence</h2>
+                        <p class="card-text italics">“To listen is to remember.”</p>
+                        <div class="card-footer" style="justify-content: center;"><span>© 2026</span></div>
                     </div>
                 </div>
             </div>
         </section>
+    </div>
+
+    <!-- ==========================================
+         AR CAMERA OVERLAY LAYER
+    ========================================== -->
+    <div id="ar-system" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: black;">
+        <button id="close-ar" style="position: absolute; top: 30px; right: 40px; z-index: 10000; padding: 10px 20px; background: rgba(0,0,0,0.8); border: 1px solid #c5a059; color: #c5a059; cursor: pointer; font-family: 'DM Sans', sans-serif; letter-spacing: 0.2em; font-size: 10px;">CLOSE AR</button>
     </div>
 
     <script src="script.js"></script>
