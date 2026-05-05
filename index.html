@@ -5,29 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memorial of the World Around</title>
     
-    <!-- Three.js Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400&family=Fraunces:ital,opsz,wght@1,9..144,200;1,9..144,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400&family=Fraunces:ital,opsz,wght@1,9..144,100;1,9..144,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     
-    <!-- LOADING SCREEN -->
     <div id="loading-screen">
         <div class="loading-text">INITIALIZING EXHIBIT... <span id="loading-percent">0</span>%</div>
-        <div class="loading-bar-bg">
-            <div class="loading-bar-fill" id="loading-bar"></div>
-        </div>
+        <div class="loading-bar-bg"><div class="loading-bar-fill" id="loading-bar"></div></div>
     </div>
 
-    <!-- BACKGROUND WAVES -->
+    <div id="star-field"></div>
     <div class="waves-wrapper">
         <svg class="waves-svg" viewBox="0 0 1440 800" preserveAspectRatio="none">
             <path class="wave-path" d="M0,200 C360,150 720,250 1080,200 C1440,150 1800,250 2160,200" />
@@ -36,48 +33,49 @@
         </svg>
     </div>
 
-    <!-- NAVIGATION -->
     <header class="museum-nav">
-        <div class="logo"><span>•</span> MEMORIAL <i>OF THE WORLD AROUND</i></div>
+        <div class="logo"><span>•</span> MEMORIAL <span class="divider">|</span> <i>OF THE WORLD AROUND</i></div>
         <nav class="nav-links">
-            <span class="active" data-section="center-view">ENTRANCE</span>
-            <span data-section="exhibit-1">TUBE RADIO</span>
-            <span data-section="exhibit-2">BPL RADIO</span>
-            <!-- HERE IS YOUR NEW AR LINK -->
-            <span style="color: #c5a059; font-weight: bold; cursor: pointer;" onclick="window.location.href='scanner.html'">[ LAUNCH AR ]</span>
+            <div id="standard-nav" style="display: flex; gap: 25px;">
+                <span class="active" data-section="center-view">ENTRANCE</span>
+                <span data-section="exhibit-1">TUBE RADIO</span>
+                <span data-section="exhibit-2">BPL RADIO</span>
+                <span data-section="reflection">REFLECTION</span>
+                <span id="start-ar-nav" style="color: #c5a059; font-weight: bold; cursor: pointer;">[ LAUNCH AR ]</span>
+            </div>
+            <div id="focus-nav" style="display: none;">
+                <span id="back-to-museum" style="color: #c5a059; cursor: pointer;">← RETURN TO MUSEUM</span>
+            </div>
         </nav>
     </header>
 
-    <!-- MAIN CONTENT -->
     <div class="sections-wrapper">
         <section class="museum-section center-view" id="center-view">
             <div class="content">
                 <div class="metadata-top">A DIGITAL MUSEUM EXPERIENCE</div>
-                <h1 class="main-title">Memorial of the <br> <i class="gold-text">World Around</i></h1>
+                <h1 class="main-title">Memorial of the <br> <span class="gold-text">World Around</span></h1>
                 <p class="description">An exploration of sound through time.</p>
                 <button class="enter-btn">ENTER THE EXHIBITION</button>
             </div>
-            <div class="scroll-footer">SCROLL ↓</div>
+            <div class="scroll-footer">
+                <span>SCROLL</span>
+                <div class="arrow-down"></div>
+            </div>
         </section>
 
         <section class="museum-section exhibit-view" id="exhibit-1">
             <div class="exhibit-grid">
                 <div class="artifact-space">
-                    <div class="model-showcase-box hover-box-1">
+                    <div class="model-showcase-box" id="box-1">
                         <canvas id="webgl-1"></canvas>
                     </div>
                 </div>
-
                 <div class="narrative-container">
                     <div class="glass-card">
                         <div class="card-accent"></div>
                         <h2 class="exhibit-title">The Age of Warmth</h2>
-                        <p class="card-text">The wooden tube radio was not merely a device — it was the glowing heart of the living room. To tune a frequency was an act of discovery. You turned the heavy dials with care, listening through the static to find a voice in the dark.</p>
-                        <p class="card-text">Sound required presence. Music demanded a room, a moment, and the patience to let the vacuum tubes warm up. There was weight to it — in the wooden cabinet, in the crackle of the broadcast, in the act of choosing to listen.</p>
-                        <div class="card-footer">
-                            <span>BROADCAST ERA</span>
-                            <span>1920s — 1950s</span>
-                        </div>
+                        <p class="card-text">The wooden tube radio was the glowing heart of the home. Sound required presence. Music demanded a moment.</p>
+                        <div class="card-footer"><span>BROADCAST ERA</span><span>1920s — 1950s</span></div>
                     </div>
                 </div>
             </div>
@@ -88,23 +86,27 @@
                 <div class="narrative-container">
                     <div class="glass-card">
                         <div class="card-accent"></div>
-                        <h2 class="exhibit-title">The Age of Speed:<br> BPL CD Radio</h2>
-                        <p class="card-text subtitle">The shift from ritual to instant.</p>
-                        <p class="card-text description">The BPL CD Radio stood at the crossroads of analog and digital. Its laser eye read invisible light. Its circuits decoded the language of ones and zeros into something the heart could feel. Progress had a new sound — clean, immediate, cool.</p>
-                        <p class="card-text details">The BPL CD Radio was India's gateway to digital audio — mass-market precision brought into the living room for the first time.</p>
-                        <p class="card-text details">A CD's spiral of microscopic pits encoded 74 minutes of audio with near-perfect fidelity — the closest humans had come to capturing silence.</p>
-                        <p class="card-text details">Where the gramophone demanded ceremony, the CD player demanded only a press of a button. Choice, at last, was effortless.</p>
-                        <p class="card-text details italics">“We didn't stream music. We waited for it.”</p>
-                        <div class="card-footer">
-                            <span>TRANSITION ERA</span>
-                            <span>1980s — 1990s</span>
-                        </div>
+                        <h2 class="exhibit-title">The Age of Speed</h2>
+                        <p class="card-text subtitle">BPL CD Radio</p>
+                        <p class="card-text description">The shift from ritual to instant. Its laser eye read invisible light.</p>
+                        <div class="card-footer"><span>TRANSITION ERA</span><span>1980s — 1990s</span></div>
                     </div>
                 </div>
-
                 <div class="artifact-space">
-                    <div class="model-showcase-box hover-box-2">
+                    <div class="model-showcase-box" id="box-2">
                         <canvas id="webgl-2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="museum-section reflection-view" id="reflection">
+            <div class="content">
+                <div class="glass-card" style="text-align: center;">
+                    <h2 class="exhibit-title">The Echo of Presence</h2>
+                    <p class="card-text">“To listen is to remember.”</p>
+                    <div class="card-footer" style="justify-content: center;">
+                        <span>© 2026</span>
                     </div>
                 </div>
             </div>
